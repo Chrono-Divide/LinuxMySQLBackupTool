@@ -291,18 +291,18 @@ namespace LinuxMySQLBackupTool
                         AppendLog("Remote server is Linux.", Color.LightGreen);
                     }
 
-                    // Build mysqldump command
+                    // Build mysqldump command with --databases option to include CREATE DATABASE and USE statements
                     string dumpCommand;
                     if (string.IsNullOrEmpty(mysqlUser))
                     {
-                        dumpCommand = $"mysqldump {database}";
+                        dumpCommand = $"mysqldump --databases {database}";
                     }
                     else
                     {
                         if (!string.IsNullOrEmpty(mysqlPassword))
-                            dumpCommand = $"mysqldump -u {mysqlUser} -p{mysqlPassword} {database}";
+                            dumpCommand = $"mysqldump -u {mysqlUser} -p{mysqlPassword} --databases {database}";
                         else
-                            dumpCommand = $"mysqldump -u {mysqlUser} {database}";
+                            dumpCommand = $"mysqldump -u {mysqlUser} --databases {database}";
                     }
 
                     AppendLog("Starting MySQL database backup...", Color.White);
