@@ -8,8 +8,6 @@ using Renci.SshNet.Common;
 
 namespace LinuxMySQLBackupTool
 {
-    // Notice: We do NOT redeclare rtbLog or other controls here;
-    // they are declared in frmMain.Designer.cs. This avoids duplication.
     public partial class frmMain : Form
     {
         private string savedIpFile = Path.Combine(Application.StartupPath, "saved_ips.txt");
@@ -59,8 +57,7 @@ namespace LinuxMySQLBackupTool
                     }
                     else if (line.StartsWith("PrivateKeyPath="))
                         txtPrivateKeyPath.Text = line.Substring(15);
-                    else if (line.StartsWith("Fingerprint="))
-                        txtFingerprint.Text = line.Substring(12);
+                    // ★ 不再处理 Fingerprint
                     else if (line.StartsWith("SSHPwd="))
                         txtSSHPwd.Text = line.Substring(7);
                     else if (line.StartsWith("Database="))
@@ -71,6 +68,9 @@ namespace LinuxMySQLBackupTool
                         txtMySQLPassword.Text = line.Substring(14);
                     else if (line.StartsWith("BackupFolder="))
                         txtBackupFolder.Text = line.Substring(13);
+                    // ★ 若想保存/加载 私钥passphrase，可自行加一行
+                    // else if (line.StartsWith("KeyPassphrase="))
+                    //     txtKeyPassphrase.Text = line.Substring(14);
                 }
             }
 
@@ -86,14 +86,17 @@ namespace LinuxMySQLBackupTool
         private void SetAuthControls()
         {
             bool isRSA = rdoRSA.Checked;
-            // RSA controls
+
+            // RSA控件显示
             lblPrivateKey.Visible = isRSA;
             txtPrivateKeyPath.Visible = isRSA;
             btnBrowse.Visible = isRSA;
-            lblFingerprint.Visible = isRSA;
-            txtFingerprint.Visible = isRSA;
 
-            // Password controls
+            // 新增的Passphrase控件
+            lblKeyPassphrase.Visible = isRSA;
+            txtKeyPassphrase.Visible = isRSA;
+
+            // 密码控件在Password模式才显示
             lblSSHPwd.Visible = !isRSA;
             txtSSHPwd.Visible = !isRSA;
         }
@@ -130,7 +133,6 @@ namespace LinuxMySQLBackupTool
             {
                 using (var client = CreateSshClient())
                 {
-                    client.HostKeyReceived += Client_HostKeyReceived;
                     client.Connect();
                     AppendLog("SSH connection successful.", Color.LightGreen);
 
@@ -275,7 +277,6 @@ namespace LinuxMySQLBackupTool
 
                 using (var client = CreateSshClient())
                 {
-                    client.HostKeyReceived += Client_HostKeyReceived;
                     client.Connect();
                     AppendLog("SSH connection successful.", Color.LightGreen);
 
@@ -291,7 +292,7 @@ namespace LinuxMySQLBackupTool
                         AppendLog("Remote server is Linux.", Color.LightGreen);
                     }
 
-                    // Build mysqldump command with --databases option to include CREATE DATABASE and USE statements
+                    // Build mysqldump command
                     string dumpCommand;
                     if (string.IsNullOrEmpty(mysqlUser))
                     {
@@ -346,7 +347,21 @@ namespace LinuxMySQLBackupTool
             if (isRSA)
             {
                 string keyPath = txtPrivateKeyPath.Text.Trim();
-                PrivateKeyFile pkFile = new PrivateKeyFile(keyPath);
+                // ★ 这里读取 Passphrase
+                string passphrase = txtKeyPassphrase.Text.Trim();
+
+                PrivateKeyFile pkFile;
+                if (!string.IsNullOrEmpty(passphrase))
+                {
+                    // 用 passphrase 解密私钥
+                    pkFile = new PrivateKeyFile(keyPath, passphrase);
+                }
+                else
+                {
+                    // 不带passphrase
+                    pkFile = new PrivateKeyFile(keyPath);
+                }
+
                 var connInfo = new ConnectionInfo(ip, port, sshUser,
                     new PrivateKeyAuthenticationMethod(sshUser, pkFile));
                 return new SshClient(connInfo);
@@ -360,27 +375,7 @@ namespace LinuxMySQLBackupTool
             }
         }
 
-        private void Client_HostKeyReceived(object sender, HostKeyEventArgs e)
-        {
-            string expectedFingerprint = txtFingerprint.Text.Trim().Replace(":", "").ToLower();
-            if (!string.IsNullOrEmpty(expectedFingerprint))
-            {
-                string receivedFingerprint = BitConverter.ToString(e.FingerPrint).Replace("-", "").ToLower();
-                if (!receivedFingerprint.Equals(expectedFingerprint))
-                {
-                    e.CanTrust = false;
-                    MessageBox.Show("Host key fingerprint verification failed! Connection aborted.");
-                }
-                else
-                {
-                    e.CanTrust = true;
-                }
-            }
-            else
-            {
-                e.CanTrust = true;
-            }
-        }
+        // ★ 去掉了 HostKeyReceived 事件
 
         private void SaveIP(string ip)
         {
@@ -398,10 +393,12 @@ namespace LinuxMySQLBackupTool
             sb.AppendLine("SSHUser=" + txtSSHUser.Text.Trim());
             sb.AppendLine("Port=" + txtPort.Text.Trim());
             sb.AppendLine("AuthType=" + (rdoRSA.Checked ? "RSA" : "Password"));
+
             if (rdoRSA.Checked)
             {
                 sb.AppendLine("PrivateKeyPath=" + txtPrivateKeyPath.Text.Trim());
-                sb.AppendLine("Fingerprint=" + txtFingerprint.Text.Trim());
+                // ★ 如果你想保存 Passphrase，可以加：
+                // sb.AppendLine("KeyPassphrase=" + txtKeyPassphrase.Text.Trim());
             }
             else
             {
@@ -411,6 +408,7 @@ namespace LinuxMySQLBackupTool
             sb.AppendLine("MySQLUser=" + txtMySQLUser.Text.Trim());
             sb.AppendLine("MySQLPassword=" + txtMySQLPassword.Text);
             sb.AppendLine("BackupFolder=" + txtBackupFolder.Text.Trim());
+
             File.WriteAllText(configFile, sb.ToString());
             MessageBox.Show("Configuration saved.");
         }
@@ -421,7 +419,7 @@ namespace LinuxMySQLBackupTool
             rtbLog.SelectionLength = 0;
             rtbLog.SelectionColor = color;
             rtbLog.AppendText(text + Environment.NewLine);
-            // Reset color for subsequent text
+            // Reset color
             rtbLog.SelectionColor = rtbLog.ForeColor;
         }
     }

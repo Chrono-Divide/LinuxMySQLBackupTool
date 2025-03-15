@@ -17,10 +17,13 @@
         private System.Windows.Forms.Label lblPrivateKey;
         private System.Windows.Forms.TextBox txtPrivateKeyPath;
         private System.Windows.Forms.Button btnBrowse;
-        private System.Windows.Forms.Label lblFingerprint;
-        private System.Windows.Forms.TextBox txtFingerprint;
+        // ★ 新增 Passphrase Label / TextBox
+        private System.Windows.Forms.Label lblKeyPassphrase;
+        private System.Windows.Forms.TextBox txtKeyPassphrase;
+
         private System.Windows.Forms.Label lblSSHPwd;
         private System.Windows.Forms.TextBox txtSSHPwd;
+
         private System.Windows.Forms.Label lblDatabase;
         private System.Windows.Forms.ComboBox cmbDatabase;
         private System.Windows.Forms.Label lblMySQLUser;
@@ -62,8 +65,8 @@
             this.lblPrivateKey = new System.Windows.Forms.Label();
             this.txtPrivateKeyPath = new System.Windows.Forms.TextBox();
             this.btnBrowse = new System.Windows.Forms.Button();
-            this.lblFingerprint = new System.Windows.Forms.Label();
-            this.txtFingerprint = new System.Windows.Forms.TextBox();
+            this.lblKeyPassphrase = new System.Windows.Forms.Label();
+            this.txtKeyPassphrase = new System.Windows.Forms.TextBox();
             this.lblSSHPwd = new System.Windows.Forms.Label();
             this.txtSSHPwd = new System.Windows.Forms.TextBox();
             this.lblDatabase = new System.Windows.Forms.Label();
@@ -83,7 +86,7 @@
             // 
             // cmbIP
             // 
-            this.cmbIP.Location = new System.Drawing.Point(152, 12);
+            this.cmbIP.Location = new System.Drawing.Point(165, 12);
             this.cmbIP.Name = "cmbIP";
             this.cmbIP.Size = new System.Drawing.Size(204, 20);
             this.cmbIP.TabIndex = 1;
@@ -108,7 +111,7 @@
             // 
             // txtSSHUser
             // 
-            this.txtSSHUser.Location = new System.Drawing.Point(152, 42);
+            this.txtSSHUser.Location = new System.Drawing.Point(165, 42);
             this.txtSSHUser.Name = "txtSSHUser";
             this.txtSSHUser.Size = new System.Drawing.Size(204, 21);
             this.txtSSHUser.TabIndex = 3;
@@ -125,7 +128,7 @@
             // 
             // txtPort
             // 
-            this.txtPort.Location = new System.Drawing.Point(152, 72);
+            this.txtPort.Location = new System.Drawing.Point(165, 72);
             this.txtPort.Name = "txtPort";
             this.txtPort.Size = new System.Drawing.Size(204, 21);
             this.txtPort.TabIndex = 5;
@@ -137,7 +140,7 @@
             this.groupBoxAuth.Controls.Add(this.rdoPassword);
             this.groupBoxAuth.Location = new System.Drawing.Point(12, 100);
             this.groupBoxAuth.Name = "groupBoxAuth";
-            this.groupBoxAuth.Size = new System.Drawing.Size(344, 45);
+            this.groupBoxAuth.Size = new System.Drawing.Size(357, 45);
             this.groupBoxAuth.TabIndex = 6;
             this.groupBoxAuth.TabStop = false;
             this.groupBoxAuth.Text = "SSH Authentication Method";
@@ -177,14 +180,14 @@
             // 
             // txtPrivateKeyPath
             // 
-            this.txtPrivateKeyPath.Location = new System.Drawing.Point(152, 152);
+            this.txtPrivateKeyPath.Location = new System.Drawing.Point(165, 152);
             this.txtPrivateKeyPath.Name = "txtPrivateKeyPath";
             this.txtPrivateKeyPath.Size = new System.Drawing.Size(204, 21);
             this.txtPrivateKeyPath.TabIndex = 8;
             // 
             // btnBrowse
             // 
-            this.btnBrowse.Location = new System.Drawing.Point(371, 150);
+            this.btnBrowse.Location = new System.Drawing.Point(381, 150);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(90, 23);
             this.btnBrowse.TabIndex = 9;
@@ -192,21 +195,22 @@
             this.btnBrowse.UseVisualStyleBackColor = true;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
             // 
-            // lblFingerprint
+            // lblKeyPassphrase
             // 
-            this.lblFingerprint.AutoSize = true;
-            this.lblFingerprint.Location = new System.Drawing.Point(12, 185);
-            this.lblFingerprint.Name = "lblFingerprint";
-            this.lblFingerprint.Size = new System.Drawing.Size(101, 12);
-            this.lblFingerprint.TabIndex = 10;
-            this.lblFingerprint.Text = "Key Fingerprint:";
+            this.lblKeyPassphrase.AutoSize = true;
+            this.lblKeyPassphrase.Location = new System.Drawing.Point(12, 185);
+            this.lblKeyPassphrase.Name = "lblKeyPassphrase";
+            this.lblKeyPassphrase.Size = new System.Drawing.Size(143, 12);
+            this.lblKeyPassphrase.TabIndex = 10;
+            this.lblKeyPassphrase.Text = "Private Key Passphrase:";
             // 
-            // txtFingerprint
+            // txtKeyPassphrase
             // 
-            this.txtFingerprint.Location = new System.Drawing.Point(152, 182);
-            this.txtFingerprint.Name = "txtFingerprint";
-            this.txtFingerprint.Size = new System.Drawing.Size(204, 21);
-            this.txtFingerprint.TabIndex = 11;
+            this.txtKeyPassphrase.Location = new System.Drawing.Point(165, 182);
+            this.txtKeyPassphrase.Name = "txtKeyPassphrase";
+            this.txtKeyPassphrase.Size = new System.Drawing.Size(204, 21);
+            this.txtKeyPassphrase.TabIndex = 11;
+            this.txtKeyPassphrase.UseSystemPasswordChar = true;
             // 
             // lblSSHPwd
             // 
@@ -216,14 +220,16 @@
             this.lblSSHPwd.Size = new System.Drawing.Size(83, 12);
             this.lblSSHPwd.TabIndex = 12;
             this.lblSSHPwd.Text = "SSH Password:";
+            this.lblSSHPwd.Visible = false;
             // 
             // txtSSHPwd
             // 
-            this.txtSSHPwd.Location = new System.Drawing.Point(152, 152);
+            this.txtSSHPwd.Location = new System.Drawing.Point(165, 152);
             this.txtSSHPwd.Name = "txtSSHPwd";
             this.txtSSHPwd.Size = new System.Drawing.Size(204, 21);
             this.txtSSHPwd.TabIndex = 13;
             this.txtSSHPwd.UseSystemPasswordChar = true;
+            this.txtSSHPwd.Visible = false;
             // 
             // lblDatabase
             // 
@@ -236,7 +242,7 @@
             // 
             // cmbDatabase
             // 
-            this.cmbDatabase.Location = new System.Drawing.Point(152, 212);
+            this.cmbDatabase.Location = new System.Drawing.Point(165, 212);
             this.cmbDatabase.Name = "cmbDatabase";
             this.cmbDatabase.Size = new System.Drawing.Size(204, 20);
             this.cmbDatabase.TabIndex = 15;
@@ -252,7 +258,7 @@
             // 
             // txtMySQLUser
             // 
-            this.txtMySQLUser.Location = new System.Drawing.Point(152, 242);
+            this.txtMySQLUser.Location = new System.Drawing.Point(165, 242);
             this.txtMySQLUser.Name = "txtMySQLUser";
             this.txtMySQLUser.Size = new System.Drawing.Size(204, 21);
             this.txtMySQLUser.TabIndex = 17;
@@ -269,7 +275,7 @@
             // 
             // txtMySQLPassword
             // 
-            this.txtMySQLPassword.Location = new System.Drawing.Point(152, 272);
+            this.txtMySQLPassword.Location = new System.Drawing.Point(165, 272);
             this.txtMySQLPassword.Name = "txtMySQLPassword";
             this.txtMySQLPassword.Size = new System.Drawing.Size(204, 21);
             this.txtMySQLPassword.TabIndex = 19;
@@ -286,14 +292,14 @@
             // 
             // txtBackupFolder
             // 
-            this.txtBackupFolder.Location = new System.Drawing.Point(152, 302);
+            this.txtBackupFolder.Location = new System.Drawing.Point(165, 302);
             this.txtBackupFolder.Name = "txtBackupFolder";
             this.txtBackupFolder.Size = new System.Drawing.Size(204, 21);
             this.txtBackupFolder.TabIndex = 21;
             // 
             // btnBrowseOutput
             // 
-            this.btnBrowseOutput.Location = new System.Drawing.Point(371, 300);
+            this.btnBrowseOutput.Location = new System.Drawing.Point(381, 300);
             this.btnBrowseOutput.Name = "btnBrowseOutput";
             this.btnBrowseOutput.Size = new System.Drawing.Size(90, 23);
             this.btnBrowseOutput.TabIndex = 22;
@@ -303,7 +309,7 @@
             // 
             // btnLogin
             // 
-            this.btnLogin.Location = new System.Drawing.Point(150, 329);
+            this.btnLogin.Location = new System.Drawing.Point(165, 332);
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.Size = new System.Drawing.Size(100, 30);
             this.btnLogin.TabIndex = 23;
@@ -313,7 +319,7 @@
             // 
             // btnBackup
             // 
-            this.btnBackup.Location = new System.Drawing.Point(256, 329);
+            this.btnBackup.Location = new System.Drawing.Point(271, 332);
             this.btnBackup.Name = "btnBackup";
             this.btnBackup.Size = new System.Drawing.Size(100, 30);
             this.btnBackup.TabIndex = 24;
@@ -328,13 +334,15 @@
             this.rtbLog.Location = new System.Drawing.Point(12, 375);
             this.rtbLog.Name = "rtbLog";
             this.rtbLog.ReadOnly = true;
-            this.rtbLog.Size = new System.Drawing.Size(449, 213);
+            this.rtbLog.Size = new System.Drawing.Size(459, 213);
             this.rtbLog.TabIndex = 25;
             this.rtbLog.Text = "";
             // 
             // frmMain
             // 
-            this.ClientSize = new System.Drawing.Size(473, 600);
+            this.ClientSize = new System.Drawing.Size(483, 600);
+            this.Controls.Add(this.lblKeyPassphrase);
+            this.Controls.Add(this.txtKeyPassphrase);
             this.Controls.Add(this.rtbLog);
             this.Controls.Add(this.btnBackup);
             this.Controls.Add(this.btnLogin);
@@ -349,8 +357,6 @@
             this.Controls.Add(this.lblDatabase);
             this.Controls.Add(this.txtSSHPwd);
             this.Controls.Add(this.lblSSHPwd);
-            this.Controls.Add(this.txtFingerprint);
-            this.Controls.Add(this.lblFingerprint);
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.txtPrivateKeyPath);
             this.Controls.Add(this.lblPrivateKey);

@@ -1,11 +1,11 @@
 # LinuxMySQLBackupTool
 
-**LinuxMySQLBackupTool** is a Windows Forms application written in C# that allows users to remotely connect to a Linux server via SSH, retrieve available MySQL databases, and perform a full backup (including both schema and data) using `mysqldump`. The application supports **RSA key-based authentication** and **password-based authentication**, and it enables users to save their configurations for future sessions.
+**LinuxMySQLBackupTool** is a Windows Forms application written in C# that allows users to remotely connect to a Linux server via SSH, retrieve available MySQL databases, and perform a full backup (including both schema and data) using `mysqldump`. The application supports both **RSA key-based authentication** (with passphrase support) and **password-based authentication**, and it enables users to save their configurations for future sessions.
 
 ## Features
 
-- ✅ **SSH Connection**: Connect to a Linux server using either **RSA key authentication** or **password authentication**.
-- ✅ **Host Key Verification**: Optionally verify the server’s **Host Key fingerprint** for additional security.
+- ✅ **SSH Connection**: Connect to a Linux server using either **RSA key authentication** (with optional passphrase support) or **password authentication**.
+- ✅ **Private Key Passphrase Support**: If your RSA private key is encrypted, provide the passphrase to decrypt and use it for authentication.
 - ✅ **Automatic Database Retrieval**: After a successful login, the tool loads and displays the list of available MySQL databases.
 - ✅ **Database Backup**: Perform a **full backup** of the selected MySQL database using `mysqldump`.
 - ✅ **Backup Storage Location**: Choose the output directory where the backup file (with a timestamp) will be saved.
@@ -18,7 +18,7 @@
 
 - **Linux Server IP**: Enter or select the Linux server's IP address.
 - **SSH Authentication**:
-  - **RSA Authentication**: Choose a private key file using the **Browse** button, and optionally enter the fingerprint for verification.
+  - **RSA Authentication**: Choose a private key file using the **Browse** button. If your private key is encrypted, enter the passphrase in the provided field.
   - **Password Authentication**: Enter your SSH password.
 - **MySQL Credentials**:
   - **Database Name**: Automatically populated after a successful login.
@@ -43,6 +43,7 @@
 - **Connection Errors**: Ensure the Linux server allows SSH access and verify that the provided credentials are correct.
 - **MySQL Database Not Loading**: Some MySQL 8.0+ installations use socket-based authentication, which may require logging in as `root` via SSH.
 - **Backup Failures**: Ensure the MySQL user has the necessary privileges to run `mysqldump`.
+- **Private Key Issues**: If your RSA private key is encrypted, make sure to provide the correct passphrase. If you prefer not to use a passphrase, export your key in an unencrypted format.
 
 ## License
 
